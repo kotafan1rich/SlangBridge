@@ -36,7 +36,7 @@ class App:
         self.window.rowconfigure(index=2, weight=1, uniform="a")
         self.window.rowconfigure(index=3, weight=3, uniform="a")
         self.window.rowconfigure(index=4, weight=1, uniform="a")
-        self.window.rowconfigure(index=4, weight=1, uniform="a")
+        self.window.rowconfigure(index=5, weight=1, uniform="a")
 
     def CreateUI(self):
         self.name = ctk.CTkLabel(
@@ -90,6 +90,7 @@ class App:
         p = th.Thread(target=self.LoadingStatus)
         p.daemon = True
         p.start()
+        self.output.configure(text="")
         if value not in slang.keys():
             out = GetDefinition(value)
         else:
