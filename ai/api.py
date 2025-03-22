@@ -18,9 +18,9 @@ def get_deepseak_response(response):
 def api(text: str, model_name: str = "deepseek-v3", is_word: bool = True) -> str:
     prompt = f"""
     Переведи с молодёжно сленга слово (именно с молодёжного): {text}.
-    Ответь сразу переводом слова без вступлений и постороннего. Максимальная длина ответа 45.
+    Ответь сразу переводом слова (одим словом или двумя) без вступлений и постороннего.
     Если вместо слова что-то непоянтное, то выведи: Такого слова нет.
-    """ if is_word else """Переведи с молодёжно сленга фразу (именно с молодёжного): {text}.
+    """ if is_word else f"""Переведи с молодёжно сленга фразу (именно с молодёжного): {text}.
     Ответь сразу переводом слова без вступлений и постороннего.
     """
     # задаем модель и промпт
@@ -61,12 +61,6 @@ def api(text: str, model_name: str = "deepseek-v3", is_word: bool = True) -> str
         },
     }
 
-    data = {
-        # "model": "claude-3-5-haiku-20241022",
-        "stream": True,
-        "is_sync": True,
-        "messages": [{"role": "user", "content": [{"type": "text", "text": prompt}]}],
-    }
     data = {
         "model": models[model_name]["model"],
         "stream": False,
