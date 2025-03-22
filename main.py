@@ -3,6 +3,11 @@ import json as js
 
 slang = js.load(open("translate.json", "r", encoding="utf-8"))
 
+def GetDefinition(input):
+    request = "Дай определение слова " + input
+    out = "Не знаю такого("
+    return out
+
 class App:
     def __init__(self):
         self.window = ctk.CTk()
@@ -13,6 +18,7 @@ class App:
         self.CreateUI()
         self.GridUI()
 
+        self.window.bind("<Return>", self.enterPressed)
         self.window.mainloop()
     
     def ConfigureGrid(self):
@@ -29,7 +35,7 @@ class App:
     def CreateUI(self):
         self.name = ctk.CTkLabel(master=self.window, text="Переводчик Слэнга", font=("Arial", 40))
         self.inputField = ctk.CTkEntry(master=self.window, font=("Arial", 40), corner_radius=20)
-        self.output = ctk.CTkLabel(master=self.window, text="", font=("Arial", 30))
+        self.output = ctk.CTkLabel(master=self.window, text="", font=("Arial", 20))
         self.confButton = ctk.CTkButton(master=self.window, text="ПЕРЕВЕСТИ", command=self.Click, fg_color="#000000", corner_radius=20, font=("Arial", 25), hover_color="#AAAAAA")
     
     def GridUI(self):
@@ -40,18 +46,20 @@ class App:
     
     def Click(self):
         value = self.inputField.get().lower().strip()
-        if value in slang.keys():
-            out = slang[value]
-            if len(out) <= 22:
-                self.output.configure(font=("Arial", 40))
-            elif len(out) <= 29:
-                self.output.configure(font=("Arial", 30))
-            else:
-                self.output.configure(font=("Arial", 20))
-        else:
-            out = "Не знаю такого("
+        if value not in slang.keys():
+            out = GetDefinition(value)
             self.output.configure(font=("Arial", 40))
-        self.output.configure(text=out.capitalize())
+        out = slang[value]
+        if len(out) <= 22:
+            self.output.configure(font=("Arial", 40))
+        elif len(out) <= 29:
+            self.output.configure(font=("Arial", 30))
+        else:
+            self.output.configure(font=("Arial", 20))
+        self.output.configure(text=out.capitalize()[:45])
+    
+    def enterPressed(self, event):
+        self.Click()
 
 
 app = App()
