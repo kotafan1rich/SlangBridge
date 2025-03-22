@@ -64,7 +64,7 @@ class App:
         t = th.Thread(target=self.Processing)
         t.daemon = True
         t.start()
-    
+
     def Processing(self):
         value = self.inputField.get().lower().strip()
         if value not in slang.keys():
