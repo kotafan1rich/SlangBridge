@@ -112,15 +112,15 @@ class App:
         self.isLoading = True
         self.output.configure(font=("Arial", 40))
         while self.isLoading:
-            self.output.configure(text="Загрузка.")
+            self.output.configure(text="Загрузка .")
             time.sleep(0.5)
             if not self.isLoading:
                 break
-            self.output.configure(text="Загрузка..")
+            self.output.configure(text="Загрузка ..")
             time.sleep(0.5)
             if not self.isLoading:
                 break
-            self.output.configure(text="Загрузка...")
+            self.output.configure(text="Загрузка ...")
             time.sleep(0.5)
 
     def Processing(self):
