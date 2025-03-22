@@ -108,22 +108,29 @@ class App:
         value = self.inputField.get().lower().strip()
         if value == "":
             return 0
+        if len(self.inputField.get().split()) != 1 and self.processed.get() == 0:
+            self.output.configure(text="Некорректный ввод", font=("Arial", 40))
+            return 0
         p = th.Thread(target=self.LoadingStatus)
         p.daemon = True
         p.start()
-        self.output.configure(text="")
-        if value not in slang.keys():
-            out = GetDefinition(value, self.modelOption.get(), self.processed.get())
-        else:
-            out = slang[value]
-        if len(out) <= 22:
-            self.output.configure(font=("Arial", 40))
-        elif len(out) <= 29:
-            self.output.configure(font=("Arial", 30))
-        else:
-            self.output.configure(font=("Arial", 20))
-        self.isLoading = False
-        self.output.configure(text=SplitOnStrinngs(out.capitalize()))
+        try:
+            self.output.configure(text="")
+            if value not in slang.keys():
+                out = GetDefinition(value, self.modelOption.get(), self.processed.get())
+            else:
+                out = slang[value]
+            if len(out) <= 22:
+                self.output.configure(font=("Arial", 40))
+            elif len(out) <= 29:
+                self.output.configure(font=("Arial", 30))
+            else:
+                self.output.configure(font=("Arial", 20))
+            self.isLoading = False
+            self.output.configure(text=SplitOnStrinngs(out.capitalize()))
+        except:
+            self.isLoading = False
+            self.output.configure(text="Ошибка")
 
     def enterPressed(self, event):
         self.Click()
