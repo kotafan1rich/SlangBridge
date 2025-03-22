@@ -67,7 +67,7 @@ class App:
             font=("Arial", 25),
             hover_color="#AAAAAA",
         )
-        self.modelOption = ctk.CTkOptionMenu(master=self.window, values=["Claude 3.5 Haiku", "Claude 3.7 Sonnet", "gpt-3.5", "gpt-4o-mini", "deepseek-r1", "deepseek-v3"])
+        self.modelOption = ctk.CTkOptionMenu(master=self.window, values=["Claude 3.5 Haiku", "Claude 3.7 Sonnet", "gpt-4o-mini", "deepseek-v3"])
         self.optionName = ctk.CTkLabel(master=self.window, text="Модели для перевода: ", font=("Arial", 20))
         self.radioText = ctk.CTkRadioButton(master=self.window, variable=self.processed, value=0, text="Слово")
         self.radioSentence = ctk.CTkRadioButton(master=self.window, variable=self.processed, value=1, text="Предложение")
