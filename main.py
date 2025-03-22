@@ -1,13 +1,14 @@
 import customtkinter as ctk
 import json as js
+import threading as th
+from ai.api import api
+from sys import exit
 
 slang = js.load(open("translate.json", "r", encoding="utf-8"))
 
 
 def GetDefinition(input):
-    request = "Дай определение слова " + input
-    out = "Не знаю такого("
-    return out
+    return api(input)
 
 
 class App:
@@ -22,6 +23,7 @@ class App:
 
         self.window.bind("<Return>", self.enterPressed)
         self.window.mainloop()
+        exit()
 
     def ConfigureGrid(self):
         self.window.columnconfigure(index=0, weight=1, uniform="a")
@@ -59,11 +61,16 @@ class App:
         self.confButton.grid(row=3, column=1, sticky="nsew")
 
     def Click(self):
+        t = th.Thread(target=self.Processing)
+        t.daemon = True
+        t.start()
+    
+    def Processing(self):
         value = self.inputField.get().lower().strip()
         if value not in slang.keys():
             out = GetDefinition(value)
-            self.output.configure(font=("Arial", 40))
-        out = slang[value]
+        else:
+            out = slang[value]
         if len(out) <= 22:
             self.output.configure(font=("Arial", 40))
         elif len(out) <= 29:
