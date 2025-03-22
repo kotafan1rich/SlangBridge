@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import json as js
 import threading as th
+import time
 from ai.api import api
 from sys import exit
 
@@ -31,9 +32,10 @@ class App:
         self.window.columnconfigure(index=2, weight=1, uniform="a")
 
         self.window.rowconfigure(index=0, weight=2, uniform="a")
-        self.window.rowconfigure(index=1, weight=2, uniform="a")
-        self.window.rowconfigure(index=2, weight=3, uniform="a")
-        self.window.rowconfigure(index=3, weight=1, uniform="a")
+        self.window.rowconfigure(index=1, weight=1, uniform="a")
+        self.window.rowconfigure(index=2, weight=1, uniform="a")
+        self.window.rowconfigure(index=3, weight=3, uniform="a")
+        self.window.rowconfigure(index=4, weight=1, uniform="a")
         self.window.rowconfigure(index=4, weight=1, uniform="a")
 
     def CreateUI(self):
@@ -43,6 +45,7 @@ class App:
         self.inputField = ctk.CTkEntry(
             master=self.window, font=("Arial", 40), corner_radius=20
         )
+        self.status = ctk.CTkLabel(master=self.window, text="", font=("Arial", 20))
         self.output = ctk.CTkLabel(master=self.window, text="", font=("Arial", 20))
         self.confButton = ctk.CTkButton(
             master=self.window,
@@ -57,16 +60,36 @@ class App:
     def GridUI(self):
         self.name.grid(row=0, column=1, sticky="nsew")
         self.inputField.grid(row=1, column=1, sticky="nsew")
-        self.output.grid(row=2, column=1, sticky="nsew")
-        self.confButton.grid(row=3, column=1, sticky="nsew")
+        self.status.grid(row=2, column=1, sticky="nsew")
+        self.output.grid(row=3, column=1, sticky="nsew")
+        self.confButton.grid(row=4, column=1, sticky="nsew")
 
     def Click(self):
         t = th.Thread(target=self.Processing)
         t.daemon = True
         t.start()
+    
+    def LoadingStatus(self):
+        self.isLoading = True
+        while self.isLoading:
+            self.status.configure(text="Загрузка.")
+            time.sleep(0.5)
+            if not self.isLoading:
+                break
+            self.status.configure(text="Загрузка..")
+            time.sleep(0.5)
+            if not self.isLoading:
+                break
+            self.status.configure(text="Загрузка...")
+            time.sleep(0.5)
 
     def Processing(self):
         value = self.inputField.get().lower().strip()
+        if value == "":
+            return 0
+        p = th.Thread(target=self.LoadingStatus)
+        p.daemon = True
+        p.start()
         if value not in slang.keys():
             out = GetDefinition(value)
         else:
@@ -78,6 +101,8 @@ class App:
         else:
             self.output.configure(font=("Arial", 20))
         self.output.configure(text=out.capitalize()[:45])
+        self.isLoading = False
+        self.status.configure(text="")
 
     def enterPressed(self, event):
         self.Click()
