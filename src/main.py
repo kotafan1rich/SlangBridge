@@ -15,11 +15,23 @@ def get_definition(input, model, mode):
     return Api().tarnslate(input, model, not bool(mode))
 
 
-def split_on_strings(n):
+def split_on_strings(text, max_length=45):
+    words = text.split()
     ret = ""
-    while len(n) > 0:
-        ret += n[:45] + "\n"
-        n = n[45:]
+    current_line = ""
+
+    for word in words:
+        if len(current_line) + len(word) < max_length:
+            current_line += f"{word} "
+        else:
+            ret += (
+                current_line.rstrip() + "\n"
+            )
+            current_line = f"{word} "
+
+    if current_line:
+        ret += current_line.rstrip()
+
     return ret
 
 
@@ -128,7 +140,9 @@ class App:
         if value == "":
             return 0
         if len(self.inputField.get().split()) != 1 and self.processed.get() == 0:
-            self.output.configure(text="Некорректный ввод", font=("Arial", 40))
+            self.output.configure(
+                text="Введите только одно слово для этого режима", font=("Arial", 20)
+            )
             return 0
         p = th.Thread(target=self.LoadingStatus)
         p.daemon = True
