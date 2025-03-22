@@ -7,9 +7,15 @@ from sys import exit
 
 slang = js.load(open("translate.json", "r", encoding="utf-8"))
 
+def GetDefinition(input, model, mode):
+    return api(input, model, not bool(mode))
 
-def GetDefinition(input, model):
-    return api(input, model)
+def SplitOnStrinngs(n):
+    ret = ""
+    while len(n) > 0:
+        ret += n[:45] + "\n"
+        n = n[45:]
+    return ret
 
 
 class App:
@@ -34,13 +40,14 @@ class App:
         self.window.columnconfigure(index=2, weight=2, uniform="a")
         self.window.columnconfigure(index=3, weight=1, uniform="a")
 
-        self.window.rowconfigure(index=0, weight=2, uniform="a")
-        self.window.rowconfigure(index=1, weight=1, uniform="a")
-        self.window.rowconfigure(index=2, weight=1, uniform="a")
-        self.window.rowconfigure(index=3, weight=1, uniform="a")
-        self.window.rowconfigure(index=4, weight=3, uniform="a")
+        self.window.rowconfigure(index=0, weight=3, uniform="a")
+        self.window.rowconfigure(index=1, weight=2, uniform="a")
+        self.window.rowconfigure(index=2, weight=2, uniform="a")
+        self.window.rowconfigure(index=3, weight=2, uniform="a")
+        self.window.rowconfigure(index=4, weight=6, uniform="a")
         self.window.rowconfigure(index=5, weight=1, uniform="a")
-        self.window.rowconfigure(index=6, weight=1, uniform="a")
+        self.window.rowconfigure(index=6, weight=2, uniform="a")
+        self.window.rowconfigure(index=7, weight=2, uniform="a")
 
     def CreateUI(self):
         self.name = ctk.CTkLabel(
@@ -49,8 +56,8 @@ class App:
         self.inputField = ctk.CTkEntry(
             master=self.window, font=("Arial", 40), corner_radius=20
         )
-        self.output = ctk.CTkLabel(master=self.window, text="", font=("Arial", 20))
-        self.output = ctk.CTkLabel(master=self.window, text="", font=("Arial", 20))
+        self.outFrame = ctk.CTkScrollableFrame(master=self.window)
+        self.output = ctk.CTkLabel(master=self.outFrame, text="", font=("Arial", 20))
         self.confButton = ctk.CTkButton(
             master=self.window,
             text="ПЕРЕВЕСТИ",
@@ -60,8 +67,8 @@ class App:
             font=("Arial", 25),
             hover_color="#AAAAAA",
         )
-        self.modelOption = ctk.CTkOptionMenu(master=self.window, values=["Z", "O", "ZHATCBT"])
-        self.optionName = ctk.CTkLabel(master=self.window, text="Доступные модели: ", font=("Arial", 20))
+        self.modelOption = ctk.CTkOptionMenu(master=self.window, values=["Claude 3.5 Haiku", "Claude 3.7 Sonnet", "gpt-3.5", "gpt-4o-mini", "deepseek-r1", "deepseek-v3"])
+        self.optionName = ctk.CTkLabel(master=self.window, text="Модели для перевода: ", font=("Arial", 20))
         self.radioText = ctk.CTkRadioButton(master=self.window, variable=self.processed, value=0, text="Слово")
         self.radioSentence = ctk.CTkRadioButton(master=self.window, variable=self.processed, value=1, text="Предложение")
         self.vScroll = ctk.CTkScrollbar(master=self.window, orientation="vertical")
@@ -73,8 +80,9 @@ class App:
         self.modelOption.grid(row=2, column=2, sticky="we")
         self.radioText.grid(row=3, column=1, sticky="nsew")
         self.radioSentence.grid(row=3, column=2, sticky="nsew")
-        self.output.grid(row=4, column=1, sticky="nsew", columnspan=2)
-        self.confButton.grid(row=5, column=1, sticky="nsew", columnspan=2)
+        self.outFrame.grid(row=4, column=1, columnspan=2, sticky="nsew")
+        self.output.grid(row=0, column=0, sticky="nsew", columnspan=2)
+        self.confButton.grid(row=6, column=1, sticky="nsew", columnspan=2)
 
     def Click(self):
         t = th.Thread(target=self.Processing)
@@ -104,21 +112,18 @@ class App:
         p.daemon = True
         p.start()
         self.output.configure(text="")
-        if self.processed == 0:
-            if value not in slang.keys():
-                out = GetDefinition(value, self.modelOption.get())
-            else:
-                out = slang[value]
-            if len(out) <= 22:
-                self.output.configure(font=("Arial", 40))
-            elif len(out) <= 29:
-                self.output.configure(font=("Arial", 30))
-            else:
-                self.output.configure(font=("Arial", 20))
-            self.isLoading = False
-            self.output.configure(text=out.capitalize()[:45])
+        if value not in slang.keys():
+            out = GetDefinition(value, self.modelOption.get(), self.processed.get())
         else:
-            ...
+            out = slang[value]
+        if len(out) <= 22:
+            self.output.configure(font=("Arial", 40))
+        elif len(out) <= 29:
+            self.output.configure(font=("Arial", 30))
+        else:
+            self.output.configure(font=("Arial", 20))
+        self.isLoading = False
+        self.output.configure(text=SplitOnStrinngs(out.capitalize()))
 
     def enterPressed(self, event):
         self.Click()
