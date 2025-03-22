@@ -7,9 +7,15 @@ from sys import exit
 
 slang = js.load(open("translate.json", "r", encoding="utf-8"))
 
+def GetDefinition(input, model, mode):
+    return api(input, model, not bool(mode))
 
-def GetDefinition(input):
-    return api(input)
+def SplitOnStrinngs(n):
+    ret = ""
+    while len(n) > 0:
+        ret += n[:45] + "\n"
+        n = n[45:]
+    return ret
 
 
 class App:
@@ -17,6 +23,8 @@ class App:
         self.window = ctk.CTk()
         self.window.geometry("750x500")
         self.window.title("Slang Translator")
+
+        self.processed = ctk.IntVar(value=0)
 
         self.ConfigureGrid()
         self.CreateUI()
@@ -28,14 +36,18 @@ class App:
 
     def ConfigureGrid(self):
         self.window.columnconfigure(index=0, weight=1, uniform="a")
-        self.window.columnconfigure(index=1, weight=4, uniform="a")
-        self.window.columnconfigure(index=2, weight=1, uniform="a")
+        self.window.columnconfigure(index=1, weight=2, uniform="a")
+        self.window.columnconfigure(index=2, weight=2, uniform="a")
+        self.window.columnconfigure(index=3, weight=1, uniform="a")
 
-        self.window.rowconfigure(index=0, weight=2, uniform="a")
-        self.window.rowconfigure(index=1, weight=1, uniform="a")
-        self.window.rowconfigure(index=2, weight=3, uniform="a")
-        self.window.rowconfigure(index=3, weight=1, uniform="a")
-        self.window.rowconfigure(index=4, weight=1, uniform="a")
+        self.window.rowconfigure(index=0, weight=3, uniform="a")
+        self.window.rowconfigure(index=1, weight=2, uniform="a")
+        self.window.rowconfigure(index=2, weight=2, uniform="a")
+        self.window.rowconfigure(index=3, weight=2, uniform="a")
+        self.window.rowconfigure(index=4, weight=6, uniform="a")
+        self.window.rowconfigure(index=5, weight=1, uniform="a")
+        self.window.rowconfigure(index=6, weight=2, uniform="a")
+        self.window.rowconfigure(index=7, weight=2, uniform="a")
 
     def CreateUI(self):
         self.name = ctk.CTkLabel(
@@ -44,8 +56,8 @@ class App:
         self.inputField = ctk.CTkEntry(
             master=self.window, font=("Arial", 40), corner_radius=20
         )
-        self.output = ctk.CTkLabel(master=self.window, text="", font=("Arial", 20))
-        self.output = ctk.CTkLabel(master=self.window, text="", font=("Arial", 20))
+        self.outFrame = ctk.CTkScrollableFrame(master=self.window)
+        self.output = ctk.CTkLabel(master=self.outFrame, text="", font=("Arial", 20))
         self.confButton = ctk.CTkButton(
             master=self.window,
             text="ПЕРЕВЕСТИ",
@@ -55,12 +67,22 @@ class App:
             font=("Arial", 25),
             hover_color="#AAAAAA",
         )
+        self.modelOption = ctk.CTkOptionMenu(master=self.window, values=["Claude 3.5 Haiku", "Claude 3.7 Sonnet", "gpt-4o-mini", "deepseek-v3"])
+        self.optionName = ctk.CTkLabel(master=self.window, text="Модели для перевода: ", font=("Arial", 20))
+        self.radioText = ctk.CTkRadioButton(master=self.window, variable=self.processed, value=0, text="Слово")
+        self.radioSentence = ctk.CTkRadioButton(master=self.window, variable=self.processed, value=1, text="Предложение")
+        self.vScroll = ctk.CTkScrollbar(master=self.window, orientation="vertical")
 
     def GridUI(self):
-        self.name.grid(row=0, column=1, sticky="nsew")
-        self.inputField.grid(row=1, column=1, sticky="nsew")
-        self.output.grid(row=2, column=1, sticky="nsew")
-        self.confButton.grid(row=3, column=1, sticky="nsew")
+        self.name.grid(row=0, column=1, sticky="nsew", columnspan=2)
+        self.inputField.grid(row=1, column=1, sticky="nsew", columnspan=2)
+        self.optionName.grid(row=2, column=1, sticky="nsew")
+        self.modelOption.grid(row=2, column=2, sticky="we")
+        self.radioText.grid(row=3, column=1, sticky="nsew")
+        self.radioSentence.grid(row=3, column=2, sticky="nsew")
+        self.outFrame.grid(row=4, column=1, columnspan=2, sticky="nsew")
+        self.output.grid(row=0, column=0, sticky="nsew", columnspan=2)
+        self.confButton.grid(row=6, column=1, sticky="nsew", columnspan=2)
 
     def Click(self):
         t = th.Thread(target=self.Processing)
@@ -91,7 +113,7 @@ class App:
         p.start()
         self.output.configure(text="")
         if value not in slang.keys():
-            out = GetDefinition(value)
+            out = GetDefinition(value, self.modelOption.get(), self.processed.get())
         else:
             out = slang[value]
         if len(out) <= 22:
@@ -101,7 +123,7 @@ class App:
         else:
             self.output.configure(font=("Arial", 20))
         self.isLoading = False
-        self.output.configure(text=out.capitalize()[:45])
+        self.output.configure(text=SplitOnStrinngs(out.capitalize()))
 
     def enterPressed(self, event):
         self.Click()
