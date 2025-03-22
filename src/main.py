@@ -127,6 +127,9 @@ class App:
         value = self.inputField.get().lower().strip()
         if value == "":
             return 0
+        if len(self.inputField.get().split()) != 1 and self.processed.get() == 0:
+            self.output.configure(text="Некорректный ввод", font=("Arial", 40))
+            return 0
         p = th.Thread(target=self.LoadingStatus)
         p.daemon = True
         p.start()
