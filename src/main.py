@@ -1,16 +1,21 @@
-import customtkinter as ctk
 import json as js
 import threading as th
 import time
-from ai.api import api
 from sys import exit
 
-slang = js.load(open("translate.json", "r", encoding="utf-8"))
+import customtkinter as ctk
 
-def GetDefinition(input, model, mode):
-    return api(input, model, not bool(mode))
+from ai.api import Api
+from config import TRANSLATE_FILE
 
-def SplitOnStrinngs(n):
+slang = js.load(open(TRANSLATE_FILE, "r", encoding="utf-8"))
+
+
+def get_definition(input, model, mode):
+    return Api().tarnslate(input, model, not bool(mode))
+
+
+def split_on_strings(n):
     ret = ""
     while len(n) > 0:
         ret += n[:45] + "\n"
@@ -67,10 +72,24 @@ class App:
             font=("Arial", 25),
             hover_color="#AAAAAA",
         )
-        self.modelOption = ctk.CTkOptionMenu(master=self.window, values=["Claude 3.5 Haiku", "Claude 3.7 Sonnet", "gpt-4o-mini", "deepseek-v3"])
-        self.optionName = ctk.CTkLabel(master=self.window, text="Модели для перевода: ", font=("Arial", 20))
-        self.radioText = ctk.CTkRadioButton(master=self.window, variable=self.processed, value=0, text="Слово")
-        self.radioSentence = ctk.CTkRadioButton(master=self.window, variable=self.processed, value=1, text="Предложение")
+        self.modelOption = ctk.CTkOptionMenu(
+            master=self.window,
+            values=[
+                "Claude 3.5 Haiku",
+                "Claude 3.7 Sonnet",
+                "gpt-4o-mini",
+                "deepseek-v3",
+            ],
+        )
+        self.optionName = ctk.CTkLabel(
+            master=self.window, text="Модели для перевода: ", font=("Arial", 20)
+        )
+        self.radioText = ctk.CTkRadioButton(
+            master=self.window, variable=self.processed, value=0, text="Слово"
+        )
+        self.radioSentence = ctk.CTkRadioButton(
+            master=self.window, variable=self.processed, value=1, text="Предложение"
+        )
         self.vScroll = ctk.CTkScrollbar(master=self.window, orientation="vertical")
 
     def GridUI(self):
@@ -88,7 +107,7 @@ class App:
         t = th.Thread(target=self.Processing)
         t.daemon = True
         t.start()
-    
+
     def LoadingStatus(self):
         self.isLoading = True
         self.output.configure(font=("Arial", 40))
@@ -113,7 +132,7 @@ class App:
         p.start()
         self.output.configure(text="")
         if value not in slang.keys():
-            out = GetDefinition(value, self.modelOption.get(), self.processed.get())
+            out = get_definition(value, self.modelOption.get(), self.processed.get())
         else:
             out = slang[value]
         if len(out) <= 22:
@@ -123,10 +142,11 @@ class App:
         else:
             self.output.configure(font=("Arial", 20))
         self.isLoading = False
-        self.output.configure(text=SplitOnStrinngs(out.capitalize()))
+        self.output.configure(text=split_on_strings(out.capitalize()))
 
     def enterPressed(self, event):
         self.Click()
 
 
-app = App()
+if __name__ == "__main__":
+    app = App()
