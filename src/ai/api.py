@@ -86,10 +86,8 @@ class Api:
         }
 
         try:
-            url_endpoint = (
-                f"https://api.gen-api.ru/api/v1/networks/{models[model_name]['endpoint']}"
-            )
+            url_endpoint = f"https://api.gen-api.ru/api/v1/networks/{models[model_name]['endpoint']}"
             response = requests.post(url_endpoint, json=data, headers=headers).json()
             return models[model_name]["response_parser"](response)
         except Exception:
-            return "Неудолось получить резкльтат. Попробуйте позже."
+            return "Неудолось получить результат. Попробуйте позже."

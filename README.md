@@ -1,6 +1,6 @@
 # SlangBridge
 
-Проограмма для перевода слов с различного сленга.
+Проограмма для перевода слов с различного сленга с использование нейросети и личосоставленного словаря
 
 ---
 
@@ -10,6 +10,10 @@
 * Оффлайн словарь часто используемых слов
 
 ### Использование
-* Скачать последний релиз  
-* Распаковать архив
-* Запустить .exe файл
+* Установить [Git](https://git-scm.com/downloads), [python3](https://www.python.org/downloads/) на ваш пк
+* Открыть cmd
+```plaintext
+* git clone https://github.com/kotafan1rich/SlangBridge
+* cd SlangBridge/src
+* python main.py
+```
