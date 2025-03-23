@@ -13,7 +13,11 @@
 * Установить [Git](https://git-scm.com/downloads), [python3](https://www.python.org/downloads/) на ваш пк
 * Открыть cmd
 ```plaintext
-* git clone https://github.com/kotafan1rich/SlangBridge
-* cd SlangBridge/src
-* python main.py
+git clone https://github.com/kotafan1rich/SlangBridge
+```
+```plaintext
+cd SlangBridge/src
+```
+```plaintext
+python main.py
 ```
