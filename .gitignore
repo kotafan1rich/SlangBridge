@@ -124,3 +124,6 @@ ruff.toml
 data/data.json
 backup/backups/*.sql
 .env-non-dev
+compil/
+app/
+release 1.0.1.zip
