@@ -16,7 +16,13 @@
 git clone https://github.com/kotafan1rich/SlangBridge
 ```
 ```plaintext
-cd SlangBridge/src
+cd SlangBridge
+```
+```plaintext
+pip install -r requirements.txt
+```
+```plaintext
+cd src
 ```
 ```plaintext
 python main.py
