@@ -5,34 +5,10 @@ from sys import exit
 
 import customtkinter as ctk
 
-from ai.api import Api
 from config import TRANSLATE_FILE
+from utils import get_definition, split_on_strings
 
 slang = js.load(open(TRANSLATE_FILE, "r", encoding="utf-8"))
-
-
-def get_definition(input, model, mode):
-    return Api().tarnslate(input, model, not bool(mode))
-
-
-def split_on_strings(text, max_length=45):
-    words = text.split()
-    ret = ""
-    current_line = ""
-
-    for word in words:
-        if len(current_line) + len(word) < max_length:
-            current_line += f"{word} "
-        else:
-            ret += (
-                current_line.rstrip() + "\n"
-            )
-            current_line = f"{word} "
-
-    if current_line:
-        ret += current_line.rstrip()
-
-    return ret
 
 
 class App:
