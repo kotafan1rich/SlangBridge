@@ -1,10 +1,9 @@
 import json as js
 import threading as th
 import time
+from PIL import Image
 from sys import exit
-
 import customtkinter as ctk
-
 from config import TRANSLATE_FILE
 from utils import get_definition, split_on_strings
 
@@ -28,10 +27,11 @@ class App:
         exit()
 
     def ConfigureGrid(self):
-        self.window.columnconfigure(index=0, weight=1, uniform="a")
-        self.window.columnconfigure(index=1, weight=2, uniform="a")
-        self.window.columnconfigure(index=2, weight=2, uniform="a")
+        self.window.columnconfigure(index=0, weight=2, uniform="a")
+        self.window.columnconfigure(index=1, weight=4, uniform="a")
+        self.window.columnconfigure(index=2, weight=3, uniform="a")
         self.window.columnconfigure(index=3, weight=1, uniform="a")
+        self.window.columnconfigure(index=4, weight=2, uniform="a")
 
         self.window.rowconfigure(index=0, weight=3, uniform="a")
         self.window.rowconfigure(index=1, weight=2, uniform="a")
@@ -59,6 +59,8 @@ class App:
             corner_radius=20,
             font=("Arial", 25),
             hover_color="#AAAAAA",
+            border_width=1,
+            border_color="#FFFFFF"
         )
         self.modelOption = ctk.CTkOptionMenu(
             master=self.window,
@@ -79,22 +81,40 @@ class App:
             master=self.window, variable=self.processed, value=1, text="Предложение"
         )
         self.vScroll = ctk.CTkScrollbar(master=self.window, orientation="vertical")
+        imageCopy = ctk.CTkImage(light_image=Image.open("static/copyIcon.png"))
+        self.copyButton = ctk.CTkButton(
+            master=self.window,
+            command=self.CopyText,
+            fg_color="#000000",
+            corner_radius=20,
+            font=("Arial", 12),
+            hover_color="#AAAAAA",
+            border_width=1,
+            border_color="#FFFFFF",
+            text="",
+            image=imageCopy
+            )
 
     def GridUI(self):
-        self.name.grid(row=0, column=1, sticky="nsew", columnspan=2)
-        self.inputField.grid(row=1, column=1, sticky="nsew", columnspan=2)
+        self.name.grid(row=0, column=1, sticky="nsew", columnspan=3)
+        self.inputField.grid(row=1, column=1, sticky="nsew", columnspan=3)
         self.optionName.grid(row=2, column=1, sticky="nsew")
-        self.modelOption.grid(row=2, column=2, sticky="we")
+        self.modelOption.grid(row=2, column=2, sticky="we", columnspan=2)
         self.radioText.grid(row=3, column=1, sticky="nsew")
-        self.radioSentence.grid(row=3, column=2, sticky="nsew")
-        self.outFrame.grid(row=4, column=1, columnspan=2, sticky="nsew")
-        self.output.grid(row=0, column=0, sticky="nsew", columnspan=2)
+        self.radioSentence.grid(row=3, column=2, sticky="nsew", columnspan=2)
+        self.outFrame.grid(row=4, column=1, columnspan=3, sticky="nsew")
+        self.output.grid(row=0, column=0, sticky="nsew", columnspan=3)
         self.confButton.grid(row=6, column=1, sticky="nsew", columnspan=2)
+        self.copyButton.grid(row=6, column=3, sticky="ns")
 
     def Click(self):
         t = th.Thread(target=self.Processing)
         t.daemon = True
         t.start()
+    
+    def CopyText(self):
+        self.window.clipboard_clear()
+        self.window.clipboard_append(self.output._text)
 
     def LoadingStatus(self):
         self.isLoading = True
