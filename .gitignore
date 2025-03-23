@@ -128,3 +128,5 @@ compil/
 app/
 presentation/
 release 1.0.1.zip
+*.env
+.env

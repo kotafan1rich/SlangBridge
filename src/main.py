@@ -60,14 +60,14 @@ class App:
             font=("Arial", 25),
             hover_color="#AAAAAA",
             border_width=1,
-            border_color="#FFFFFF"
+            border_color="#FFFFFF",
         )
         self.modelOption = ctk.CTkOptionMenu(
             master=self.window,
             values=[
+                "gpt-4o-mini",
                 "Claude 3.5 Haiku",
                 "Claude 3.7 Sonnet",
-                "gpt-4o-mini",
                 "deepseek-v3",
             ],
         )
@@ -92,8 +92,8 @@ class App:
             border_width=1,
             border_color="#FFFFFF",
             text="",
-            image=imageCopy
-            )
+            image=imageCopy,
+        )
 
     def GridUI(self):
         self.name.grid(row=0, column=1, sticky="nsew", columnspan=3)
@@ -111,7 +111,7 @@ class App:
         t = th.Thread(target=self.Processing)
         t.daemon = True
         t.start()
-    
+
     def CopyText(self):
         self.window.clipboard_clear()
         self.window.clipboard_append(self.output._text)
