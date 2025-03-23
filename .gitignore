@@ -127,4 +127,4 @@ backup/backups/*.sql
 compil/
 app/
 release 1.0.1.zip
-.env
+*.env
