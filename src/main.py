@@ -14,7 +14,7 @@ class App:
     def __init__(self):
         self.window = ctk.CTk()
         self.window.geometry("750x500")
-        self.window.title("Slang Translator")
+        self.window.title("Slang Bridge")
 
         self.processed = ctk.IntVar(value=0)
 
@@ -44,7 +44,7 @@ class App:
 
     def CreateUI(self):
         self.name = ctk.CTkLabel(
-            master=self.window, text="Переводчик Слэнга", font=("Arial", 40)
+            master=self.window, text="Slang Bridge", font=("Arial", 40)
         )
         self.inputField = ctk.CTkEntry(
             master=self.window, font=("Arial", 40), corner_radius=20
