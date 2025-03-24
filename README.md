@@ -18,6 +18,7 @@ git clone https://github.com/kotafan1rich/SlangBridge
 ```plaintext
 cd SlangBridge
 ```
+Создайте файл в корне проекта со строкой API_TOKEN=<[ваш токен](https://gen-api.ru/account/api-tokens)>
 ```plaintext
 pip install -r requirements.txt
 ```
