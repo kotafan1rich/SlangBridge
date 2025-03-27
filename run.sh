@@ -13,6 +13,11 @@ else
     echo "Файл requirements.txt не найден. Продолжаем без установки зависимостей."
 fi
 
+if [ -f ".env" ]; then
+else
+    echo "Создайте файл .env и добавтье туда API_TOKEN"
+fi
+
 if [ -f "src/main.py" ]; then
     echo "Запускаем main.py..."
     cd src
